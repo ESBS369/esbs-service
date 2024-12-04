@@ -48,14 +48,11 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('fetch', (event) => {
     event.respondWith(
         caches.match(event.request).then((response) => {
+            // Serve cached response if available, else fetch from network
             return response || fetch(event.request);
-        })
-    );
-});
-self.addEventListener('fetch', (event) => {
-    event.respondWith(
-        caches.match(event.request).then((response) => {
-            return response || fetch(event.request);
+        }).catch(() => {
+            // If both cache and network fail, optionally serve an offline page
+            return caches.match('/offline.html');
         })
     );
 });
